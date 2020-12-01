@@ -28,3 +28,6 @@ advent_of_code_2020_ex
 
 # Temporary files for e.g. tests
 /tmp
+
+# Ignore personal inputs
+/input/
