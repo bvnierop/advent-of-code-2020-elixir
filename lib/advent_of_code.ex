@@ -3,16 +3,11 @@ defmodule AdventOfCode do
   Documentation for `AdventOfCode`.
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> AdventOfCode.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def main(args) do
+    if length(args) != 0 do
+      AdventOfCode.Day01ReportRepair.solve()
+    else
+      IO.puts "Please provide an argument"
+    end
   end
 end
