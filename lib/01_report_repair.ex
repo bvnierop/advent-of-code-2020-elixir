@@ -7,20 +7,20 @@ defmodule AdventOfCode.Day01ReportRepair do
   Run it
   """
   def solve do
-    solve_a()
-    solve_b()
+    IO.inspect :timer.tc &solve_a/0
+    IO.inspect :timer.tc &solve_b/0
   end
 
   def solve_a do
     numbers = input() |> Enum.map(&String.to_integer/1)
     pairs = for x <- numbers, y <- numbers, x + y == 2020, do: x * y
-    IO.inspect pairs
+    Enum.at(pairs, 0)
   end
 
   def solve_b do
     numbers = input() |> Enum.map(&String.to_integer/1)
     pairs = for x <- numbers, y <- numbers, z <- numbers, x + y + z == 2020, do: x * y * z
-    IO.inspect pairs
+    Enum.at(pairs, 0)
   end
 
   def input do
