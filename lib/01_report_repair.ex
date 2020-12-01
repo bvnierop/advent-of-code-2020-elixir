@@ -4,11 +4,24 @@ defmodule AdventOfCode.Day01ReportRepair do
   """
 
   @doc """
+  Time a function and print its result"
+  """
+  def time(f, label) do
+    case :timer.tc f do
+      {time, result} ->
+        IO.inspect result, label: label
+        IO.puts "Runtime: #{:erlang.float_to_binary(time / 1_000, [decimals: 2])} ms."
+    end
+
+  end
+
+  @doc """
   Run it
   """
   def solve do
-    IO.inspect :timer.tc &solve_a/0
-    IO.inspect :timer.tc &solve_b/0
+    time &solve_a/0, "Part 1"
+    IO.puts ""
+    time &solve_b/0, "Part 2"
   end
 
   def solve_a do
