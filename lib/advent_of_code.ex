@@ -11,9 +11,10 @@ defmodule AdventOfCode do
       import AdventOfCode
 
       def solve do
-        time &solve_a/0, "Part 1"
+        input = lines()
+        time (fn -> solve_a(input) end), "Part 1"
         IO.puts ""
-        time &solve_b/0, "Part 2"
+        time (fn -> solve_b(input) end), "Part 2"
       end
     end
   end

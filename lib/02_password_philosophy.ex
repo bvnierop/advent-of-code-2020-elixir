@@ -1,13 +1,15 @@
 defmodule AdventOfCode.Day02PasswordPhilosophy do
   use AdventOfCode
   
-  def solve_a do
-    input()
+  def solve_a(input) do
+    input
+    |> parse
     |> Enum.count(&valid_a/1)
   end
 
-  def solve_b do
-    input()
+  def solve_b(input) do
+    input
+    |> parse
     |> Enum.count(&valid_b/1)
   end
 
@@ -26,9 +28,9 @@ defmodule AdventOfCode.Day02PasswordPhilosophy do
     chr_a != chr_b && chr in [chr_a, chr_b]
   end
 
-  def input do
+  def parse(lines) do
     re = ~r/(\d+)-(\d+) (\w): (\w+)/
-    lines()
+    lines
     |> Enum.map(fn line ->
       [lo, hi, chr, password] = Regex.run(re, line, capture: :all_but_first)
       { String.to_integer(lo), String.to_integer(hi), chr, password }

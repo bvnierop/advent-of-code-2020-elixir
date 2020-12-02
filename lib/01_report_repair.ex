@@ -1,11 +1,11 @@
 defmodule AdventOfCode.Day01ReportRepair do
   use AdventOfCode
 
-  def solve_a, do: solve_generic(2)
-  def solve_b, do: solve_generic(3)
+  def solve_a(input), do: solve_generic(input, 2)
+  def solve_b(input), do: solve_generic(input, 3)
 
-  def solve_generic(part_count) do
-    parts = make_sum(input() |> to_set, 2020, part_count)
+  def solve_generic(input, part_count) do
+    parts = make_sum(input |> to_set, 2020, part_count)
     { parts, Enum.reduce(parts, &*/2) }
   end
 
@@ -31,7 +31,7 @@ defmodule AdventOfCode.Day01ReportRepair do
     |> MapSet.new
   end
 
-  def input do
+  def lines do
     # ["1721", "979", "366", "299", "675", "1456"]
     File.stream!("input/01_report_repair.in")
     |> Stream.map(&String.trim/1)
