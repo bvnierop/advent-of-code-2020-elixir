@@ -2,15 +2,30 @@ defmodule AdventOfCode.Day01ReportRepair do
   use AdventOfCode
 
   def solve_a do
-    numbers = input() |> Enum.map(&String.to_integer/1)
-    pairs = for x <- numbers, y <- numbers, x + y == 2020, do: x * y
-    Enum.at(pairs, 0)
+    {a, b } = find_sum(input() |> to_set, 2020)
+    {a, b, a * b}
+  end
+
+  def find_sum(numbers, sum) do
+    numbers
+    |> Enum.find(&MapSet.member?(numbers, sum - &1))
+    |> case do
+         nil -> nil
+         number -> { number, sum - number }
+       end
   end
 
   def solve_b do
-    numbers = input() |> Enum.map(&String.to_integer/1)
-    pairs = for x <- numbers, y <- numbers, z <- numbers, x + y + z == 2020, do: x * y * z
-    Enum.at(pairs, 0)
+    numbers = input() |> to_set
+    a = Enum.find(numbers, &find_sum(numbers, 2020 - &1))
+    {b, c} = find_sum(numbers, 2020 - a)
+    {a, b, c, a * b * c}
+  end
+
+  def to_set(numbers) do
+    numbers
+    |> Enum.map(&String.to_integer/1)
+    |> MapSet.new
   end
 
   def input do
