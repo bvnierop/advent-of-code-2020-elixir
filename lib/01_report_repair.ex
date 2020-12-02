@@ -1,28 +1,5 @@
 defmodule AdventOfCode.Day01ReportRepair do
-  @moduledoc """
-  Documentation for `Day 01`.
-  """
-
-  @doc """
-  Time a function and print its result"
-  """
-  def time(f, label) do
-    case :timer.tc f do
-      {time, result} ->
-        IO.inspect result, label: label
-        IO.puts "Runtime: #{:erlang.float_to_binary(time / 1_000, [decimals: 2])} ms."
-    end
-
-  end
-
-  @doc """
-  Run it
-  """
-  def solve do
-    time &solve_a/0, "Part 1"
-    IO.puts ""
-    time &solve_b/0, "Part 2"
-  end
+  use AdventOfCode
 
   def solve_a do
     numbers = input() |> Enum.map(&String.to_integer/1)
