@@ -3,43 +3,36 @@ defmodule AdventOfCode.Day02PasswordPhilosophy do
   
   def solve_a do
     input()
-    |> Enum.filter(&valid_a/1)
-    |> Enum.count
+    |> Enum.count(&valid_a/1)
   end
 
   def solve_b do
     input()
-    |> Enum.filter(&valid_b/1)
-    |> Enum.count
+    |> Enum.count(&valid_b/1)
   end
 
-  def valid_a(password) do
-    min = String.to_integer(password["min"])
-    max = String.to_integer(password["max"])
-    count = count_characters(password["password"])[password["chr"]] || 0
-    count >= min && count <= max
-  end
-
-  def count_characters(password) do
-    password
+  def valid_a({lo, hi, chr, password}) do
+    count = password
     |> String.graphemes
-    |> Enum.reduce(%{}, fn chr, acc ->
-      Map.put acc, chr, (acc[chr] || 0) + 1
-      end)
+    |> Enum.count(&(chr == &1))
+
+    count in lo..hi
   end
 
-  def valid_b(password) do
-    passphrase = password["password"]
-    chra = String.at(passphrase, String.to_integer(password["min"]) - 1)
-    chrb = String.at(passphrase, String.to_integer(password["max"]) - 1)
-    expected = password["chr"]
-    (chra == expected || chrb == expected) && chra != chrb
+  def valid_b({a, b, chr, password}) do
+    chr_a = String.at(password, a - 1)
+    chr_b = String.at(password, b - 1)
+
+    chr_a != chr_b && chr in [chr_a, chr_b]
   end
 
   def input do
-    re = ~r/(?<min>\d+)-(?<max>\d+) (?<chr>\w): (?<password>\w+)/
+    re = ~r/(\d+)-(\d+) (\w): (\w+)/
     lines()
-    |> Enum.map(&Regex.named_captures(re, &1))
+    |> Enum.map(fn line ->
+      [lo, hi, chr, password] = Regex.run(re, line, capture: :all_but_first)
+      { String.to_integer(lo), String.to_integer(hi), chr, password }
+    end)
   end
 
   def lines do
