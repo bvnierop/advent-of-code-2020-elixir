@@ -8,6 +8,7 @@ defmodule AdventOfCode do
       nil -> IO.puts "Please provide an argument"
       s -> (case String.to_integer s do
               1 -> AdventOfCode.Day01ReportRepair.solve()
+              2 -> AdventOfCode.Day02PasswordPhilosophy.solve()
               _ -> IO.puts "That day is not supported"
             end)
 
