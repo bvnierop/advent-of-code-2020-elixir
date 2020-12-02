@@ -29,15 +29,20 @@ defmodule AdventOfCode do
     end
   end
 
-  def main(args) do
-    case Enum.at(args, 0) do
-      nil -> IO.puts "Please provide an argument"
-      s -> (case String.to_integer s do
-              1 -> AdventOfCode.Day01ReportRepair.solve()
-              2 -> AdventOfCode.Day02PasswordPhilosophy.solve()
-              _ -> IO.puts "That day is not supported"
-            end)
+  def get_solutions do
+    :code.all_available()
+    |> Enum.map(fn {m, _, _} -> to_string(m) end)
+    |> Enum.filter(&String.match?(&1, ~r/AdventOfCode\.Day\d\d\w+/))
+    |> Enum.reduce(%{}, fn elt, acc ->
+      [day] = Regex.run(~r/(\d\d)/, elt, capture: :all_but_first)
+      Map.put(acc, String.to_integer(day), String.to_existing_atom(elt)) end)
+  end
 
+  def main(args) do
+    solutions = get_solutions()
+    case solutions[String.to_integer(Enum.at(args, 0) || "0")] do
+      nil -> IO.puts "Please provide an argument"
+      mod -> apply(mod, :solve, [])
     end
   end
 end
