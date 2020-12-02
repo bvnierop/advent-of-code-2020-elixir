@@ -1,25 +1,28 @@
 defmodule AdventOfCode.Day01ReportRepair do
   use AdventOfCode
 
-  def solve_a do
-    {a, b } = find_sum(input() |> to_set, 2020)
-    {a, b, a * b}
+  def solve_a, do: solve_generic(2)
+  def solve_b, do: solve_generic(3)
+
+  def solve_generic(part_count) do
+    parts = make_sum(input() |> to_set, 2020, part_count)
+    { parts, Enum.reduce(parts, &*/2) }
   end
 
-  def find_sum(numbers, sum) do
-    numbers
-    |> Enum.find(&MapSet.member?(numbers, sum - &1))
-    |> case do
-         nil -> nil
-         number -> { number, sum - number }
-       end
+  def make_sum(numbers, target_sum, to_use) when to_use == 1 do
+    case MapSet.member?(numbers, target_sum) do
+      false -> nil
+      true -> [target_sum]
+    end
   end
 
-  def solve_b do
-    numbers = input() |> to_set
-    a = Enum.find(numbers, &find_sum(numbers, 2020 - &1))
-    {b, c} = find_sum(numbers, 2020 - a)
-    {a, b, c, a * b * c}
+  def make_sum(numbers, target_sum, to_use) do
+    Enum.find_value(numbers, fn n ->
+      case make_sum(numbers, target_sum - n, to_use - 1) do
+        nil -> nil
+        res -> [n | res]
+      end
+    end)
   end
 
   def to_set(numbers) do
