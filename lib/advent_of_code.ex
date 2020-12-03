@@ -10,11 +10,16 @@ defmodule AdventOfCode do
     quote do
       import AdventOfCode
 
-      def solve do
-        input = lines()
+      def solve(input_file) do
+        input = lines(input_file)
         time (fn -> solve_a(input) end), "Part 1"
         IO.puts ""
         time (fn -> solve_b(input) end), "Part 2"
+      end
+
+      def lines(input_file) do
+        File.stream!(Path.join(["input", input_file]))
+        |> Stream.map(&String.trim/1)
       end
     end
   end
@@ -39,11 +44,28 @@ defmodule AdventOfCode do
       Map.put(acc, String.to_integer(day), String.to_existing_atom(elt)) end)
   end
 
+  def filebase_from_module(module) do
+    module
+    |> to_string
+    |> String.split(".")
+    |> Enum.at(2)
+    |> Macro.underscore
+    |> String.replace(~r/^day(\d+\w+)/, "\\1")
+  end
+
+  def filename(module, suffix) when suffix == nil do
+    filebase_from_module(module) <> ".in"
+  end
+
+  def filename(module, suffix) when suffix != nil do
+    filebase_from_module(module) <> "_" <> suffix <> ".in"
+  end
+
   def main(args) do
     solutions = get_solutions()
     case solutions[String.to_integer(Enum.at(args, 0) || "0")] do
       nil -> IO.puts "Please provide an argument"
-      mod -> apply(mod, :solve, [])
+      mod -> apply(mod, :solve, [filename(mod, Enum.at(args, 1))])
     end
   end
 end

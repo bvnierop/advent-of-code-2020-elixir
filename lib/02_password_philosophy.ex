@@ -36,10 +36,4 @@ defmodule AdventOfCode.Day02PasswordPhilosophy do
       { String.to_integer(lo), String.to_integer(hi), chr, password }
     end)
   end
-
-  def lines do
-    # ["1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"]
-    File.stream!("input/02_password_philosophy.in")
-    |> Stream.map(&String.trim/1)
-  end
 end

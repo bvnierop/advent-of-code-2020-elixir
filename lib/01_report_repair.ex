@@ -30,10 +30,4 @@ defmodule AdventOfCode.Day01ReportRepair do
     |> Enum.map(&String.to_integer/1)
     |> MapSet.new
   end
-
-  def lines do
-    # ["1721", "979", "366", "299", "675", "1456"]
-    File.stream!("input/01_report_repair.in")
-    |> Stream.map(&String.trim/1)
-  end
 end
