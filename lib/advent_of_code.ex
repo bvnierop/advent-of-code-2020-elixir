@@ -20,6 +20,7 @@ defmodule AdventOfCode do
       def lines(input_file) do
         File.stream!(Path.join(["input", input_file]))
         |> Stream.map(&String.trim/1)
+        |> Stream.reject(&is_nil/1)
       end
     end
   end
