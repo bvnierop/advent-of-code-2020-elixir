@@ -23,16 +23,11 @@ defmodule AdventOfCode.Day04PassportProcessing do
   defp solve_b(input), do: input |> process |> Enum.count(&(valid?(&1, true)))
 
   def process(input) do
-    {acc, cur} = Enum.reduce(input, {[], []}, fn line, {acc, cur} ->
-      case line do
-        "" -> { [cur | acc], [] }
-        l -> { acc, [l | cur] }
-      end
-    end)
-    [ cur | acc ]
+    input
+    |> Enum.chunk_by(&(&1 == ""))
     |> Enum.map(&Enum.join(&1, " "))
+    |> Enum.reject(&(&1 == ""))
     |> Enum.map(&convert/1)
-    |> Enum.reverse
   end
 
   def convert(card_as_string) do
