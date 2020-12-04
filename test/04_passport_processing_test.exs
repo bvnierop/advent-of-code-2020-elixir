@@ -26,8 +26,8 @@ defmodule AdventOfCode.Day04PassportProcessingTest do
   test "parses each chunk" do
     first = process(@test_input)
     |> Enum.at(0)
-    assert first[:cid] ==  "147"
-    assert first.cid ==  "147"
+    assert first[:cid] == "147"
+    assert first.cid == "147"
   end
 
   test "valid" do

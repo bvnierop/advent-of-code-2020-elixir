@@ -1,23 +1,7 @@
 defmodule AdventOfCode.Day04PassportProcessing do
   use AdventOfCode
 
-  def validations do
-    [
-      [:byr, ~r/^(\d{4})$/, fn [yr] -> String.to_integer(yr) in 1920..2002 end],
-      [:iyr, ~r/^(\d{4})$/, fn [yr] -> String.to_integer(yr) in 2010..2020 end],
-      [:eyr, ~r/^(\d{4})$/, fn [yr] -> String.to_integer(yr) in 2020..2030 end],
-      [:hgt, ~r/^(\d+)(cm|in)$/, fn [height, unit] ->
-        case unit do
-          "cm" -> String.to_integer(height) in 150..193
-          "in" -> String.to_integer(height) in 59..76
-          _ -> false
-        end
-      end],
-      [:hcl, ~r/^\#([0-9a-f]{6})$/, fn _ -> true end],
-      [:ecl, ~r/^(\w+)$/, fn [ecl] -> ecl in ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"] end],
-      [:pid, ~r/^(\d{9})$/, fn _ -> true end]
-    ]
-  end
+  @required_fields [:byr, :iyr, :eyr, :hgt, :hcl, :ecl, :pid]
 
   defp solve_a(input), do: input |> process |> Enum.count(&(valid?(&1, false)))
   defp solve_b(input), do: input |> process |> Enum.count(&(valid?(&1, true)))
@@ -38,16 +22,31 @@ defmodule AdventOfCode.Day04PassportProcessing do
   end
 
   def valid?(card, strict) do
-    validations()
-    |> Enum.all?(&valid_key?(card, &1, skip_data_validation: !strict))
+    @required_fields -- Map.keys(card) == [] &&
+      Enum.all?(card, fn {key, value} -> valid_key?(key, value, strict) end)
   end
 
-  def valid_key?(card, [key, regex, vald], skip_data_validation: skip_data_validation) do
-    case { Map.has_key?(card, key),
-           Regex.run(regex, card[key] || "", capture: :all_but_first) } do
-      { false, _ } -> false
-      { true, nil } -> skip_data_validation
-      { true, match } -> skip_data_validation || vald.(match)
-    end
-  end
+  def valid_key?(_key, value, false), do: value != nil
+  def valid_key?(key, value, true), do: valid_key?(key, value)
+
+  def valid_key?(key, value) when key in [:byr, :iyr, :eyr] and is_binary(value),
+    do: valid_key?(key, String.to_integer(value))
+
+  def valid_key?(:byr, yr), do: yr in 1920..2002
+  def valid_key?(:iyr, yr), do: yr in 2010..2020
+  def valid_key?(:eyr, yr), do: yr in 2020..2030
+
+  def valid_key?(:hgt, hgt) when is_binary(hgt),
+    do: valid_key?(:hgt, Integer.parse(hgt))
+
+  def valid_key?(:hgt, {hgt, "cm"}), do: hgt in 150..193
+  def valid_key?(:hgt, {hgt, "in"}), do: hgt in 59..76
+
+  def valid_key?(:hcl, hcl), do: Regex.match?(~r/^\#([0-9a-f]{6})$/, hcl)
+
+  def valid_key?(:ecl, ecl), do: ecl in ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
+  def valid_key?(:pid, pid), do: Regex.match?(~r/^(\d{9})$/, pid)
+  def valid_key?(:cid, _), do: true
+
+  def valid_key?(_, _), do: false
 end
