@@ -20,7 +20,6 @@ defmodule AdventOfCode do
       def lines(input_file) do
         File.stream!(Path.join(["input", input_file]))
         |> Stream.map(&String.trim/1)
-        |> Stream.reject(&(&1 == ""))
         |> Enum.to_list
       end
     end
@@ -66,7 +65,7 @@ defmodule AdventOfCode do
   def main(args) do
     solutions = get_solutions()
     case solutions[String.to_integer(Enum.at(args, 0) || "0")] do
-      nil -> IO.puts "Please provide an argument"
+      nil -> IO.puts "Please provide a valid day number."
       mod -> apply(mod, :solve, [filename(mod, Enum.at(args, 1))])
     end
   end
