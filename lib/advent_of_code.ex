@@ -21,6 +21,7 @@ defmodule AdventOfCode do
         File.stream!(Path.join(["input", input_file]))
         |> Stream.map(&String.trim/1)
         |> Stream.reject(&(&1 == ""))
+        |> Enum.to_list
       end
     end
   end
