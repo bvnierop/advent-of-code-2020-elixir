@@ -1,0 +1,37 @@
+#! /usr/bin/env elixir
+
+defmodule Prepare do
+  def main(args) do
+    case Enum.at(args, 0) do
+      nil -> IO.puts "Please specify a day."
+      day -> fetch(day)
+    end
+  end
+
+  def fetch(day) do
+    Application.ensure_all_started(:inets)
+    Application.ensure_all_started(:ssl)
+    {:ok, {{_http_ver, 200, 'OK'}, _headers, body}} =
+      :httpc.request(:get, {to_charlist("https://adventofcode.com/2020/day/" <> day) , []}, [], [])
+
+    regex = ~r/<h2>--- Day (\d+): (.+?) ---<\/h2>/
+    [_, title] = Regex.run(regex, to_string(body), capture: :all_but_first)
+
+    create_files(day, title)
+  end
+
+  def create_files(day, title) do
+    day_string = String.pad_leading(day, 2, "0")
+    title_string = String.replace(title, " ", "") |> Macro.underscore
+    basename = day_string <> "_" <> title_string
+
+    _paths = [{"lib", "ex"}, {"input", "in"}]
+    |> Enum.each(fn {dir, suf} ->
+      path = Path.join([dir, basename <> "." <> suf])
+      IO.puts "Creating " <> path
+      System.cmd("touch", [path])
+    end)
+  end
+end
+
+Prepare.main(System.argv())
