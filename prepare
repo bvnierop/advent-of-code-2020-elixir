@@ -25,9 +25,11 @@ defmodule Prepare do
     title_string = String.replace(title, " ", "") |> Macro.underscore
     basename = day_string <> "_" <> title_string
 
-    _paths = [{"lib", "ex"}, {"input", "in"}]
-    |> Enum.each(fn {dir, suf} ->
-      path = Path.join([dir, basename <> "." <> suf])
+    _paths = [{"lib", [], "ex"}, {"input", [], "in"}, {"test", ["test"], "exs"}]
+    |> Enum.each(fn {dir, suf, ext} ->
+      joined_suffix = (if Enum.count(suf) == 0, do: suf, else: ["" | suf])
+      |> Enum.join("_")
+      path = Path.join([dir, basename <> joined_suffix <> "." <> ext])
       IO.puts "Creating " <> path
       System.cmd("touch", [path])
     end)
