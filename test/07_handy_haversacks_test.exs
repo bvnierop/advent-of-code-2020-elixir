@@ -1,6 +1,5 @@
 defmodule AdventOfCode.Day07HandyHaversacksTest do
   use ExUnit.Case
-  doctest AdventOfCode.Day05BinaryBoarding
   doctest AdventOfCode.Day07HandyHaversacks
 
   import AdventOfCode.Day07HandyHaversacks

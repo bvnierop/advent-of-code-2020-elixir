@@ -39,7 +39,7 @@ defmodule AdventOfCode do
   def get_solutions do
     :code.all_available()
     |> Enum.map(fn {m, _, _} -> to_string(m) end)
-    |> Enum.filter(&String.match?(&1, ~r/AdventOfCode\.Day\d\d\w+/))
+    |> Enum.filter(&String.match?(&1, ~r/AdventOfCode\.Day\d\d[^\.]+$/))
     |> Enum.reduce(%{}, fn elt, acc ->
       [day] = Regex.run(~r/(\d\d)/, elt, capture: :all_but_first)
       Map.put(acc, String.to_integer(day), String.to_existing_atom(elt)) end)
