@@ -29,7 +29,8 @@ defmodule AdventOfCode.Day11SeatingSystemTest do
     ###
     """)
 
-    assert Simulation.step(layout) == result
+    assert Simulation.step(layout, 4,
+      Layout.build_neighbour_cache(layout, ["L", "#", "."])) == result
   end
 
   test "free seats with four or more adjacent seats taken" do
@@ -49,15 +50,16 @@ defmodule AdventOfCode.Day11SeatingSystemTest do
     LLL..
     """)
 
-    assert Simulation.step(layout) == result
+    assert Simulation.step(layout, 4,
+      Layout.build_neighbour_cache(layout, ["L", "#", "."])) == result
   end
 
   test "find neighbours" do
     layout = make_layout("""
-    ....
-    LL.#
-    ....
-    ...L
+    .....
+    LL.#L
+    .....
+    ...L.
     """)
 
     neighbours = [{0, 1}, {3, 1}, {3, 3}]

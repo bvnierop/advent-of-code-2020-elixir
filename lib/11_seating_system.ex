@@ -24,29 +24,34 @@ defmodule AdventOfCode.Day11SeatingSystem do
     @directions [{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}]
     def find_neighbours(layout, x, y, allowed \\ [".", "L", "#"]) do
       @directions
-      |> Enum.map(&find_neighbour(layout, x, y, &1, allowed))
+      |> Enum.map(fn {dx, dy} ->
+        find_neighbour(layout, x + dx, y + dy, {dx, dy}, allowed)
+      end)
       |> Enum.reject(&(&1 == nil))
     end
 
     def find_neighbour(layout, x, y, {offset_x, offset_y}, allowed) do
-      {{max_x, max_y}, _} = Enum.max(layout)
+      seat = layout[{x, y}]
+      cond do
+        seat in allowed -> {x, y}
+        seat == nil -> nil
+        :else -> find_neighbour(layout, x + offset_x, y + offset_y, {offset_x, offset_y}, allowed)
+      end
+    end
 
-      Stream.unfold({x + offset_x, y + offset_y}, fn
-        {x, y} when x >= 0 and x <= max_x and y >= 0 and y <= max_y -> {{x, y}, {x + offset_x, y + offset_y}}
-        {_, _} -> nil
-      end)
-      |> Enum.find(fn pos -> layout[pos] in allowed end)
+    def build_neighbour_cache(layout, neighbours) do
+      Enum.map(layout, fn {{x, y}, _} -> {{x, y}, Layout.find_neighbours(layout, x, y, neighbours)} end)
+      |> Map.new
     end
   end
 
   defmodule Simulation do
     def stream(layout, occupied_threshold, neighbours \\ ["L", "#", "."]) do
-      neighbour_cache = Enum.map(layout, fn {{x, y}, _} -> {{x, y}, Layout.find_neighbours(layout, x, y, neighbours)} end)
-      |> Map.new
-      Stream.iterate(layout, &step(&1, occupied_threshold, neighbour_cache))
+      cache = Layout.build_neighbour_cache(layout,neighbours)
+      Stream.iterate(layout, &step(&1, occupied_threshold, cache))
     end
 
-    def step(layout, occupied_threshold, neighbour_cache) do
+    def step(layout, occupied_threshold, neighbours) do
       {max_x, max_y} = Map.keys(layout) |> Enum.max
 
       for x <- 0..max_x,
@@ -54,7 +59,7 @@ defmodule AdventOfCode.Day11SeatingSystem do
         into: %{} do
           seat = layout[{x, y}]
           if seat in ["L", "#"] do
-            occupied_neighbours = neighbour_cache[{x, y}]
+            occupied_neighbours = neighbours[{x, y}]
             |> Enum.count(fn pos -> layout[pos] == "#" end)
             case {seat, occupied_neighbours} do
               {"L", 0} -> {{x, y}, "#"}
@@ -72,23 +77,19 @@ defmodule AdventOfCode.Day11SeatingSystem do
     layout = Layout.parse(input)
     stream = Simulation.stream(layout, 4)
 
-    import ExProf.Macro
-    profile do
     Enum.reduce_while(stream, %{}, fn
       state, prev when state == prev -> {:halt, state}
       state, _prev -> {:cont, state}
     end)
     |> Enum.count(fn {_key, seat} -> seat == "#" end)
-    end
-    0
   end
 
   def solve_b(input) do
     layout = Layout.parse(input)
     stream = Simulation.stream(layout, 5, ["L", "#"])
 
-    Enum.reduce_while(stream, %{}, fn
-      state, prev when state == prev -> {:halt, state}
+      Enum.reduce_while(stream, %{}, fn
+        state, prev when state == prev -> {:halt, state}
       state, _prev -> {:cont, state}
     end)
     |> Enum.count(fn {_key, seat} -> seat == "#" end)
