@@ -46,15 +46,15 @@ defmodule Mix.Tasks.Prep do
   defp solution_file_contents(module_name) do
     """
     defmodule AdventOfCode.#{module_name} do
-    use AdventOfCode
+      use AdventOfCode
 
-    def solve_a(input) do
-    Enum.at(input, 0)
-    end
+      def solve_a(input) do
+        Enum.at(input, 0)
+      end
 
-    def solve_b(input) do
-    Enum.at(input, 0)
-    end
+      def solve_b(input) do
+        Enum.at(input, 0)
+      end
     end
     """
   end
@@ -67,11 +67,11 @@ defmodule Mix.Tasks.Prep do
   defp test_file_contents(module_name) do
     """
     defmodule AdventOfCode.#{module_name}Test do
-    use ExUnit.Case
-    doctest AdventOfCode.#{module_name}
-    import AdventOfCode.#{module_name}
+      use ExUnit.Case
+      doctest AdventOfCode.#{module_name}
+      import AdventOfCode.#{module_name}
 
-    test "solve", do: solve_a([])
+      test "solve", do: solve_a([])
     end
     """
   end
