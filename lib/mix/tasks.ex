@@ -26,7 +26,7 @@ defmodule Mix.Tasks.Prep do
 
     create_solution_file(basename, module_name)
     create_test_file(basename, module_name)
-    create_input_files(basename)
+    create_input_files(basename, day)
   end
 
   defp create_solution_file(filename, module_name) do
@@ -76,8 +76,33 @@ defmodule Mix.Tasks.Prep do
     """
   end
 
-  defp create_input_files(filename) do
-    create_file("input/#{filename}.in")
+  defp create_input_files(filename, day) do
+    case download_puzzle(2020, day) do
+      {:error, :no_session_file} ->
+        create_file("input/#{filename}.in")
+        IO.puts "Failed to read .session file. Could not download puzzle input."
+      {:error, :failed} ->
+        create_file("input/#{filename}.in")
+        IO.puts "Failed to download puzzle input."
+      {:ok, input} -> create_file("input/#{filename}.in", input)
+    end
     create_file("input/#{filename}_test.in")
+  end
+
+  defp download_puzzle(year, day) do
+    Application.ensure_all_started(:inets)
+    Application.ensure_all_started(:ssl)
+
+    case File.read(".session") do
+      {:error, _} -> {:error, :no_session_file}
+      {:ok, session} ->
+        headers = [{'cookie', String.to_charlist("session=" <> session)}]
+        url = 'https://adventofcode.com/#{year}/day/#{day}/input'
+
+        case :httpc.request(:get, {url, headers}, [], []) do
+          {:ok, {{'HTTP/1.1', 200, 'OK'}, _, puzzle}} -> {:ok, to_string(puzzle)}
+          _ -> {:error, :failed}
+        end
+    end
   end
 end
