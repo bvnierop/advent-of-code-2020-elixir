@@ -5,7 +5,11 @@ defmodule AdventOfCode.Day17ConwayCubesTest do
 
   alias AdventOfCode.Day17ConwayCubes.Life, as: Life
 
-  @test_input File.stream!("input/17_conway_cubes_test.in") |> Enum.map(&String.trim/1) |> Enum.to_list
+  @test_input """
+  .#.
+  ..#
+  ###
+  """ |> String.trim |> String.split("\n")
 
   test "parse" do
     assert parse(@test_input) == MapSet.new([{1, 0, 0}, {2, 1, 0}, {0, 2, 0}, {1, 2, 0}, {2, 2, 0}])

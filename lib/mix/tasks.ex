@@ -99,6 +99,8 @@ defmodule Mix.Tasks.Prep do
         headers = [{'cookie', String.to_charlist("session=" <> session)}]
         url = 'https://adventofcode.com/#{year}/day/#{day}/input'
 
+        IO.puts "Fetching #{url}"
+
         case :httpc.request(:get, {url, headers}, [], []) do
           {:ok, {{'HTTP/1.1', 200, 'OK'}, _, puzzle}} -> {:ok, to_string(puzzle)}
           _ -> {:error, :failed}
