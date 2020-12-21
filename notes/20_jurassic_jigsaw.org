@@ -1,0 +1,89 @@
+* Day 20: Jurasisic Jigsaw
+** Quick thoughts
+*** This is a graph
+*** Tiles are vertices
+*** Tile edges are graph edges
+*** Rotation matters
+So it's perhaps better to add each tile four times and store edges as ~{pattern,
+side}~.
+
+** Initial idea for implementation
+*** Parsing
+**** Parse all pieces
+id, visual representation, edges
+*** Finding a corner
+**** Build an edge list
+**** Convert it to an adjacency list
+**** Find tiles with just two adjacent tiles
+These are the corners
+*** Solving the puzzle
+**** Pick one corner as top-left
+**** Add all other tiles four times
+***** Once for every orientation
+***** Store each edge as ~{pattern, side}~
+**** Walk the graph
+*** Assumptions made (and to verify)
+**** There is only one possible ordering
+Here's how we can determine that:
+- There are N tiles
+- That means the result is sqrt(N) * sqrt(N)
+- Each tile has 4 edges
+- Some edges should occur exactly once
+  > The outsides: ~4 * sqrt(N)~
+- All other should occur exactly twice
+  > The insides: ~(4 * N) - outsides~
+
+To verify this, we do need to implement parsing, so here goes.
+The verify function must:
+a) read all tiles
+b) count all edges
+c) group them by how often they occur
+d) verify the puzzle input by above rules
+
+This turns out to be correct
+
+** Part one
+Since we only need to identify the corners, we don't actually have to solve the
+puzzle for part one. Instead, we can just identifiy the corners
+*** Algorithm
+For each tile
+  Count the amount of tiles that have a matching edge
+Filter on tiles that have exactly 2 matching edges
+
+matching_edge?(a, b)
+  ae = map(a.edges, &([&1, String.reverse(&1)] |> Enum.sort) |> MapSet.new
+  be = map(b.edges, &([&1, String.reverse(&1)] |> Enum.sort) |> MapSet.new
+  MapSet.intersection(ae, be) != MapSet.new
+
+
+** Part two
+*** Rebuilding the picture
+For part two we need to actually implement rebuilding the picture. We can do
+this (mostly?) in a deterministic fasion.
+
+We start with any corner. We'll flip and rotate it until it fits in the top-left
+corner. Next, we'll find the tile to the right. There's only one way this fits,
+because we know two edges: the one that matches our corner tile, and the top one
+(since that doesn't match any other tile). From here, we can do the entire top
+row. Then the second row. Then the third, etc.
+
+The easiest way to do this is to add all eight orientations for every tile
+(except the top-left corner) to the graph, and then find the right neighbour
+until no more right neighbours can be found, then find the one to the bottom.
+
+This will build our picture like this:
+.
+
+..
+
+............
+.
+
+............
+..
+
+............
+............
+.
+
+etc...
