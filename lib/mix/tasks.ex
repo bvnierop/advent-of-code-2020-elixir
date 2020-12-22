@@ -68,8 +68,9 @@ defmodule Mix.Tasks.Prep do
     """
     defmodule AdventOfCode.#{module_name}Test do
       use ExUnit.Case
-      doctest AdventOfCode.#{module_name}
+
       import AdventOfCode.#{module_name}
+      doctest AdventOfCode.#{module_name}
 
       test "solve", do: solve_a([])
     end
