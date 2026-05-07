@@ -1,6 +1,6 @@
 defmodule AdventOfCode.Day05BinaryBoarding do
   use AdventOfCode
-  use Bitwise, only_operators: true
+  import Bitwise, only: [&&&: 2, >>>: 2]
 
   def solve_a(input) do
     input

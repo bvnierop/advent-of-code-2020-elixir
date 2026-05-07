@@ -1,7 +1,7 @@
 defmodule AdventOfCode.Day14DockingData do
   use AdventOfCode
 
-  use Bitwise, only_operators: true
+  import Bitwise, only: [&&&: 2, |||: 2, <<<: 2, >>>: 2]
 
   defmodule Computer do
     def reduce(instructions) do
