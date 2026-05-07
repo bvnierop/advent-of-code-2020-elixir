@@ -9,7 +9,7 @@ defmodule Mix.Tasks.Prep do
   defp fetch(day) do
     Application.ensure_all_started(:inets)
     Application.ensure_all_started(:ssl)
-    {:ok, {{_http_ver, 200, 'OK'}, _headers, body}} =
+    {:ok, {{_http_ver, 200, ~c"OK"}, _headers, body}} =
       :httpc.request(:get, {to_charlist("https://adventofcode.com/2020/day/" <> day) , []}, [], [])
 
     regex = ~r/<h2>--- Day (\d+): (.+?) ---<\/h2>/
@@ -82,9 +82,10 @@ defmodule Mix.Tasks.Prep do
       {:error, :no_session_file} ->
         create_file("input/#{filename}.in")
         IO.puts "Failed to read .session file. Could not download puzzle input."
-      {:error, :failed} ->
+      {:error, err} ->
         create_file("input/#{filename}.in")
         IO.puts "Failed to download puzzle input."
+        IO.puts err
       {:ok, input} -> create_file("input/#{filename}.in", input)
     end
     create_file("input/#{filename}_test.in")
@@ -97,14 +98,14 @@ defmodule Mix.Tasks.Prep do
     case File.read(".session") do
       {:error, _} -> {:error, :no_session_file}
       {:ok, session} ->
-        headers = [{'cookie', String.to_charlist("session=" <> session)}]
-        url = 'https://adventofcode.com/#{year}/day/#{day}/input'
+        headers = [{~c"cookie", String.to_charlist("session=" <> session)}]
+        url = ~c"https://adventofcode.com/#{year}/day/#{day}/input"
 
         IO.puts "Fetching #{url}"
 
         case :httpc.request(:get, {url, headers}, [], []) do
-          {:ok, {{'HTTP/1.1', 200, 'OK'}, _, puzzle}} -> {:ok, to_string(puzzle)}
-          _ -> {:error, :failed}
+          {:ok, {{~c"HTTP/1.1", 200, ~c"OK"}, _, puzzle}} -> {:ok, to_string(puzzle)}
+          {:error, err} -> {:error, err}
         end
     end
   end
