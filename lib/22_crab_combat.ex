@@ -34,8 +34,11 @@ defmodule AdventOfCode.Day22CrabCombat do
   Performing a turn with at least one empty deck returns a winner
 
   ## Examples
-    iex> turn(start({[9, 2], [8, 5]}))
-    {:turn, {:queue.from_list([2, 9, 8]), :queue.drop(:queue.from_list([8, 5]))}, {9, 8}, 1}
+    iex> case turn(start({[9, 2], [8, 5]})) do
+    ...>   {:turn, {deck_a, deck_b}, cards, winner} ->
+    ...>     {:turn, {:queue.to_list(deck_a), :queue.to_list(deck_b)}, cards, winner}
+    ...> end
+    {:turn, {[2, 9, 8], [5]}, {9, 8}, 1}
 
     iex> turn(start({[9, 2], []}))
     {:winner, [9, 2], 1}
