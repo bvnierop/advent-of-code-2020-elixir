@@ -4,5 +4,5 @@ defmodule AdventOfCode.Day01ReportRepairTest do
   import AdventOfCode.Day01ReportRepair
   doctest AdventOfCode.Day01ReportRepair
 
-  test "solve", do: solve_a([])
+  test "solve", do: solve_a(["1", "2", "2019"])
 end
