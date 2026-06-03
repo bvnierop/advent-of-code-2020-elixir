@@ -46,7 +46,7 @@ defmodule AdventOfCode.Day22CrabCombat do
       if a > b do
         {:turn, {:queue.join(qa, :queue.from_list([a, b])), qb}, {a, b}, 1}
       else
-        {:turn, {qa, :queue.join(qb, :queue.from_list([b, a]))}, {a, b}, 1}
+        {:turn, {qa, :queue.join(qb, :queue.from_list([b, a]))}, {a, b}, 2}
       end
     end
 
